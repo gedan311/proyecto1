@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌡️ Conversor de Temperaturas Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .header {
+            text-align: center;
+            margin: 60px 0 40px 0;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 10px rgba(255,255,255,0.3); }
+            to { text-shadow: 2px 2px 4px rgba(0,0,0,0.3), 0 0 20px rgba(255,255,255,0.5); }
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .converter-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .temperature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .temp-card {
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .temp-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+            border-color: rgba(108, 92, 231, 0.3);
+        }
+
+        .temp-card.celsius {
+            background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+        }
+
+        .temp-card.fahrenheit {
+            background: linear-gradient(145deg, #fff3e0, #ffcc02);
+        }
+
+        .temp-card.kelvin {
+            background: linear-gradient(145deg, #f3e5f5, #ce93d8);
+        }
+
+        .temp-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .temp-label {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .temp-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.5em;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .temp-input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.3);
+            transform: scale(1.02);
+        }
+
+        .temp-display {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 15px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+
+        .conversion-info {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .conversion-info h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .formula-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .formula-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .formula {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .quick-convert {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .quick-convert h3 {
+            color: #6c5ce7;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .quick-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-btn {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .quick-btn:hover {
+            background: linear-gradient(45deg, #5f3dc4, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .reference-table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            overflow-x: auto;
+        }
+
+        .reference-table h3 {
+            color: #6c5ce7;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+            
+            .converter-container {
+                padding: 25px;
+            }
+            
+            .temperature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .temp-input {
+                font-size: 1.2em;
+            }
+            
+            .temp-display {
+                font-size: 1.5em;
+            }
+        }
+
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <button class="back-button" onclick="window.location.href='ProyCilantroSalvaje.html'">←</button>
+    
+    <div class="header">
+        <h1>🌡️ Conversor de Temperaturas Pro</h1>
+        <p>Convierte entre Celsius, Fahrenheit y Kelvin instantáneamente</p>
+    </div>
+
+    <div class="converter-container">
+        <div class="temperature-grid">
+            <div class="temp-card celsius">
+                <span class="temp-icon">🔵</span>
+                <div class="temp-label">Celsius (°C)</div>
+                <input type="number" class="temp-input" id="celsius" placeholder="0" step="0.01">
+                
+            </div>
+
+            <div class="temp-card fahrenheit">
+                <span class="temp-icon">🟡</span>
+                <div class="temp-label">Fahrenheit (°F)</div>
+                <input type="number" class="temp-input" id="fahrenheit" placeholder="32" step="0.01">
+                
+            </div>
+
+            <div class="temp-card kelvin">
+                <span class="temp-icon">🟣</span>
+                <div class="temp-label">Kelvin (K)</div>
+                <input type="number" class="temp-input" id="kelvin" placeholder="273.15" step="0.01">
+                
+            </div>
+        </div>
+
+        <div class="conversion-info">
+            <h3>📐 Fórmulas de Conversión</h3>
+            <div class="formula-grid">
+                <div class="formula-card">
+                    <div class="formula-title">Celsius ↔ Fahrenheit</div>
+                    <div class="formula">°F = (°C × 9/5) + 32</div>
+                    <div class="formula">°C = (°F - 32) × 5/9</div>
+                </div>
+                <div class="formula-card">
+                    <div class="formula-title">Celsius ↔ Kelvin</div>
+                    <div class="formula">K = °C + 273.15</div>
+                    <div class="formula">°C = K - 273.15</div>
+                </div>
+                <div class="formula-card">
+                    <div class="formula-title">Fahrenheit ↔ Kelvin</div>
+                    <div class="formula">K = (°F - 32) × 5/9 + 273.15</div>
+                    <div class="formula">°F = (K - 273.15) × 9/5 + 32</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quick-convert">
+            <h3>⚡ Conversiones Rápidas</h3>
+            <div class="quick-buttons">
+                <button class="quick-btn" onclick="setTemp('celsius', 0)">Punto de Congelación</button>
+                <button class="quick-btn" onclick="setTemp('celsius', 100)">Punto de Ebullición</button>
+                <button class="quick-btn" onclick="setTemp('celsius', 37)">Temperatura Corporal</button>
+                <button class="quick-btn" onclick="setTemp('celsius', 25)">Temperatura Ambiente</button>
+                <button class="quick-btn" onclick="setTemp('kelvin', 0)">Cero Absoluto</button>
+                
+            </div>
+        </div>
+
+        <div class="reference-table">
+            <h3>📊 Tabla de Referencia</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th>Celsius (°C)</th>
+                        <th>Fahrenheit (°F)</th>
+                        <th>Kelvin (K)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cero Absoluto</td>
+                        <td>-273.15</td>
+                        <td>-459.67</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>Punto de Congelación del Agua</td>
+                        <td>0</td>
+                        <td>32</td>
+                        <td>273.15</td>
+                    </tr>
+                    <tr>
+                        <td>Temperatura Ambiente</td>
+                        <td>25</td>
+                        <td>77</td>
+                        <td>298.15</td>
+                    </tr>
+                    <tr>
+                        <td>Temperatura Corporal</td>
+                        <td>37</td>
+                        <td>98.6</td>
+                        <td>310.15</td>
+                    </tr>
+                    <tr>
+                        <td>Punto de Ebullición del Agua</td>
+                        <td>100</td>
+                        <td>212</td>
+                        <td>373.15</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const celsiusInput = document.getElementById('celsius');
+        const fahrenheitInput = document.getElementById('fahrenheit');
+        const kelvinInput = document.getElementById('kelvin');
+        
+        const celsiusDisplay = document.getElementById('celsiusDisplay');
+        const fahrenheitDisplay = document.getElementById('fahrenheitDisplay');
+        const kelvinDisplay = document.getElementById('kelvinDisplay');
+
+        // Funciones de conversión
+        function celsiusToFahrenheit(celsius) {
+            return (celsius * 9/5) + 32;
+        }
+
+        function celsiusToKelvin(celsius) {
+            return celsius + 273.15;
+        }
+
+        function fahrenheitToCelsius(fahrenheit) {
+            return (fahrenheit - 32) * 5/9;
+        }
+
+        function fahrenheitToKelvin(fahrenheit) {
+            return (fahrenheit - 32) * 5/9 + 273.15;
+        }
+
+        function kelvinToCelsius(kelvin) {
+            return kelvin - 273.15;
+        }
+
+        function kelvinToFahrenheit(kelvin) {
+            return (kelvin - 273.15) * 9/5 + 32;
+        }
+
+        // Función para actualizar todas las conversiones
+        function updateFromCelsius(celsius) {
+            const fahrenheit = celsiusToFahrenheit(celsius);
+            const kelvin = celsiusToKelvin(celsius);
+            
+            fahrenheitInput.value = fahrenheit.toFixed(2);
+            kelvinInput.value = kelvin.toFixed(2);
+            
+            updateDisplays(celsius, fahrenheit, kelvin);
+        }
+
+        function updateFromFahrenheit(fahrenheit) {
+            const celsius = fahrenheitToCelsius(fahrenheit);
+            const kelvin = fahrenheitToKelvin(fahrenheit);
+            
+            celsiusInput.value = celsius.toFixed(2);
+            kelvinInput.value = kelvin.toFixed(2);
+            
+            updateDisplays(celsius, fahrenheit, kelvin);
+        }
+
+        function updateFromKelvin(kelvin) {
+            const celsius = kelvinToCelsius(kelvin);
+            const fahrenheit = kelvinToFahrenheit(kelvin);
+            
+            celsiusInput.value = celsius.toFixed(2);
+            fahrenheitInput.value = fahrenheit.toFixed(2);
+            
+            updateDisplays(celsius, fahrenheit, kelvin);
+        }
+
+        function updateDisplays(celsius, fahrenheit, kelvin) {
+            celsiusDisplay.textContent = `${celsius.toFixed(2)} °C`;
+            fahrenheitDisplay.textContent = `${fahrenheit.toFixed(2)} °F`;
+            kelvinDisplay.textContent = `${kelvin.toFixed(2)} K`;
+            
+            // Añadir efectos visuales basados en temperatura
+            updateTemperatureEffects(celsius);
+        }
+
+        function updateTemperatureEffects(celsius) {
+            const cards = document.querySelectorAll('.temp-card');
+            
+            cards.forEach(card => {
+                card.style.boxShadow = '0 8px 25px rgba(0,0,0,0.08)';
+            });
+            
+            if (celsius < 0) {
+                // Muy frío - efecto azul
+                cards.forEach(card => {
+                    card.style.boxShadow = '0 8px 25px rgba(33, 150, 243, 0.3)';
+                });
+            } else if (celsius > 35) {
+                // Muy caliente - efecto naranja/rojo
+                cards.forEach(card => {
+                    card.style.boxShadow = '0 8px 25px rgba(255, 152, 0, 0.4)';
+                });
+            } else if (celsius >= 20 && celsius <= 30) {
+                // Temperatura ideal - efecto verde
+                cards.forEach(card => {
+                    card.style.boxShadow = '0 8px 25px rgba(76, 175, 80, 0.3)';
+                });
+            }
+        }
+
+        // Event listeners
+        celsiusInput.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                updateFromCelsius(value);
+            } else {
+                clearAll();
+            }
+        });
+
+        fahrenheitInput.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                updateFromFahrenheit(value);
+            } else {
+                clearAll();
+            }
+        });
+
+        kelvinInput.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            if (!isNaN(value)) {
+                updateFromKelvin(value);
+            } else {
+                clearAll();
+            }
+        });
+
+        function clearAll() {
+            celsiusDisplay.textContent = '-- °C';
+            fahrenheitDisplay.textContent = '-- °F';
+            kelvinDisplay.textContent = '-- K';
+        }
+
+        // Función para conversiones rápidas
+        function setTemp(scale, value) {
+            if (scale === 'celsius') {
+                celsiusInput.value = value;
+                updateFromCelsius(value);
+            } else if (scale === 'fahrenheit') {
+                fahrenheitInput.value = value;
+                updateFromFahrenheit(value);
+            } else if (scale === 'kelvin') {
+                kelvinInput.value = value;
+                updateFromKelvin(value);
+            }
+            
+            // Efecto visual para el botón presionado
+            event.target.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                event.target.style.transform = 'translateY(-2px)';
+            }, 150);
+        }
+
+        // Inicializar con valores por defecto
+        window.addEventListener('load', () => {
+            updateFromCelsius(25); // Temperatura ambiente
+            
+            // Animación de entrada
+            const cards = document.querySelectorAll('.temp-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Efectos de teclado
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const activeElement = document.activeElement;
+                if (activeElement.classList.contains('temp-input')) {
+                    activeElement.blur();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

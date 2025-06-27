@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Física - Cocina Solar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: 
+            linear-gradient(#84ecfa, #d7d6d666), 
+            url(../imagenes/fondoolla.jpg);
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            transition: margin-left 0.3s ease;
+            line-height: 1.6;
+        }
+
+        /* Sidebar izquierda */
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(135, 206, 235, 0.95);
+            backdrop-filter: blur(15px);
+            border-right: 3px solid rgba(255, 215, 0, 0.6);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .sidebar:hover,
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Sidebar derecha */
+        .sidebar-right {
+            position: fixed;
+            right: -280px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(135, 206, 235, 0.95);
+            backdrop-filter: blur(15px);
+            border-left: 3px solid rgba(255, 215, 0, 0.6);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            box-shadow: -2px 0 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .sidebar-right:hover,
+        .sidebar-right.active {
+            right: 0;
+        }
+
+        .sidebar-right-content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar-right-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sidebar-trigger {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 999;
+            background: transparent;
+        }
+
+        .sidebar-trigger-right {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 999;
+            background: transparent;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid #FFD700;
+            background: #87CEEB;
+        }
+
+        .sidebar-title {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 0 1.5rem 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-left-color: #FFD700;
+            transform: translateX(5px);
+            color: #222;
+        }
+
+        .nav-item:before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item:hover:before {
+            opacity: 1;
+        }
+
+        .nav-item-text {
+            margin-left: 1.5rem;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            margin: 20px;
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-header {
+            color: #333333;
+            padding: 40px 20px;
+            text-align: center;
+            font-family: "Chango", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            background: rgba(135, 206, 235, 0.3);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .navbar ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .navbar ul li {
+            display: inline-block;
+        }
+
+        .buttonI, .buttonE, .buttonI2, .buttonE2, .buttonx, .buttonxx {
+            background: linear-gradient(45deg, #9b64f5, #e7b2fc);
+            border-radius: 25px;
+            padding: 12px 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(155, 100, 245, 0.3);
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+            
+        }
+
+        .buttonI:hover, .buttonE:hover, .buttonI2:hover, .buttonE2:hover, .buttonx:hover, .buttonxx:hover {
+            background: linear-gradient(45deg, #e7b2fc, #9b64f5);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(155, 100, 245, 0.4);
+        }
+
+        .buttonI a, .buttonE a, .buttonI2 a, .buttonE2 a, .buttonx a, .buttonxx a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .buttonI:hover a, .buttonE:hover a, .buttonI2:hover a, .buttonE2:hover a, .buttonx:hover a, .buttonxx:hover a {
+            color: #333;
+        }
+
+        /* Títulos centrados */
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+            margin: 2rem 0 1.5rem 0;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #333;
+            border-bottom: 3px solid #FFD700;
+            padding-bottom: 10px;
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        /* Secciones mejoradas */
+        .projects, .about, .Descripción, .reflex, .ilust, .aument {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        /* Contenedores de imágenes */
+        .reflex, .ilust, .aument {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .reflex img, .ilust img, .aument img {
+            max-width: 400px;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .reflex img:hover, .ilust img:hover, .aument img:hover {
+            transform: scale(1.05);
+        }
+
+        .inreflex {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .inreflex h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .ejemplos {
+            margin-top: 1rem;
+            text-decoration: none;
+        }
+
+        .ejemplos h3 a {
+            color: #9b64f5;
+            text-decoration: none;
+            font-weight: bold;
+            border-bottom: 2px solid #9b64f5;
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .ejemplos h3 a:hover {
+            color: #e7b2fc;
+            border-bottom-color: #e7b2fc;
+        }
+
+        /* Textos justificados */
+        p {
+            text-align: justify;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        /* Imágenes de fórmulas */
+        .ns, .sn {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: white;
+            padding: 10px;
+        }
+
+        /* Indicadores de sidebar */
+        .sidebar-indicator {
+            position: fixed;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(to bottom, #87CEEB, #FFD700);
+            border-radius: 2px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-indicator:hover {
+            opacity: 1;
+            width: 6px;
+        }
+
+        .sidebar-indicator-right {
+            position: fixed;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(to bottom, #FFD700, #87CEEB);
+            border-radius: 2px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-indicator-right:hover {
+            opacity: 1;
+            width: 6px;
+        }
+
+        /* Animaciones */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .projects, .about, .Descripción, .reflex, .ilust, .aument {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Efectos adicionales */
+        .buttonI:before, .buttonE:before, .buttonI2:before, .buttonE2:before, .buttonx:before, .buttonxx:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .buttonI:hover:before, .buttonE:hover:before, .buttonI2:hover:before, .buttonE2:hover:before, .buttonx:hover:before, .buttonxx:hover:before {
+            left: 100%;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .sidebar, .sidebar-right {
+                width: 250px;
+            }
+            
+            .sidebar {
+                left: -220px;
+            }
+            
+            .sidebar-right {
+                right: -220px;
+            }
+
+            .main-content {
+                margin: 10px;
+                padding: 20px;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .navbar ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .reflex, .ilust, .aument {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .reflex img, .ilust img, .aument img {
+                max-width: 100%;
+            }
+
+            .inreflex h3 {
+                text-align: center;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chango&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Indicadores de sidebar -->
+    <div class="sidebar-indicator"></div>
+    <div class="sidebar-indicator-right"></div>
+    
+    <!-- Triggers para activar sidebars -->
+    <div class="sidebar-trigger"></div>
+    <div class="sidebar-trigger-right"></div>
+
+    <!-- Sidebar izquierda -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <img src="../imagenes/logo.png" alt="logo" class="sidebar-logo">
+                <h3 class="sidebar-title">NAVEGACIÓN</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Páginas Principales</div>
+                    <a href="ProyCilantroSalvaje.html" class="nav-item">
+                        <span class="nav-item-text">Inicio</span>
+                    </a>
+                    <a href="#descripcion" class="nav-item">
+                        <span class="nav-item-text">Descripción</span>
+                    </a>
+                    <a href="#reflexion" class="nav-item">
+                        <span class="nav-item-text">Reflexión del Calor</span>
+                    </a>
+                    <a href="#funcionamiento" class="nav-item">
+                        <span class="nav-item-text">Funcionamiento</span>
+                    </a>
+                    <a href="#temperatura" class="nav-item">
+                        <span class="nav-item-text">Temperatura</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Otras Materias</div>
+                    <a href="Quimica.html" class="nav-item">
+                        <span class="nav-item-text">Química</span>
+                    </a>
+                    <a href="fisica2.html" class="nav-item">
+                        <span class="nav-item-text">Física</span>
+                    </a>
+                    <a href="tecnologia.html" class="nav-item">
+                        <span class="nav-item-text">Tecnología</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Sidebar derecha -->
+    <div class="sidebar-right" id="sidebar-right">
+        <div class="sidebar-right-content">
+            <div class="sidebar-header">
+                <img src="../imagenes/logo.png" alt="logo" class="sidebar-logo">
+                <h3 class="sidebar-title">RECURSOS FÍSICA</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Gráficas y Análisis</div>
+                    <a href="../imagenes/reflexcalor1.png" class="nav-item">
+                        <span class="nav-item-text">Reflexión del Calor</span>
+                    </a>
+                    <a href="../imagenes/aumentcalor.png" class="nav-item">
+                        <span class="nav-item-text">Aumento del Calor</span>
+                    </a>
+                    <a href="../imagenes/gfc.png" class="nav-item">
+                        <span class="nav-item-text">Gráfica Fahrenheit-Celsius</span>
+                    </a>
+                    <a href="../imagenes/gkc.png" class="nav-item">
+                        <span class="nav-item-text">Gráfica Kelvin-Celsius</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Herramientas</div>
+                    <a href="conversor.html" class="nav-item">
+                        <span class="nav-item-text">Conversor de Temperatura</span>
+                    </a>
+                    <a href="2.html" class="nav-item">
+                        <span class="nav-item-text">Calculadora Térmica</span>
+                    </a>
+                    <a href="simulador.html" class="nav-item">
+                        <span class="nav-item-text">Simulador Solar</span>
+                    </a>
+                </div>
+                
+                
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <header class="main-header">
+            <div class="logo">Cocina Solar - Matematicas</div>
+        </header>
+
+        
+
+        <section class="Descripción" id="descripcion">
+            <h2>Descripción del Prototipo</h2>
+            <p>
+                Hemos analizado las ecuaciones que representan la eficiencia del dispositivo mediante gráficas que relacionan la temperatura máxima que puede llegar a alcanzar el dispositivo en función de la temperatura ambiente y la dispersión de calor aprovechando los rayos solares como principal fuente de energía evitando por completo la emisión de gases de efecto invernadero. Aplicamos fórmulas geométricas, termodinámicas y físicas (las que no aparezcan aquí estarán en el área de física) para maximizar la captación de calor, permitiendo ajustar el prototipo para mejorar su rendimiento, asegurando que pueda funcionar de manera efectiva en diferentes condiciones climáticas y horarios del día, siempre y cuando se conserven ciertas condiciones necesarias para su funcionamiento.
+            </p>
+        </section>
+
+        <section class="reflex" id="reflexion">
+            <img src="../imagenes/reflexcalor1.png" alt="Gráfica de Reflexión del Calor">
+            <div class="inreflex">
+                <h2>Gráfica de Reflexión del Calor</h2>
+                <h3>
+                    La luz del sol y cualquier otra se reflejan según la ley de la reflexión. Si se encuentra con un material reflector en un ángulo de 20 grados, significa que también saldrá de él con el mismo ángulo hacia la dirección contraria, lo que facilita dirigir el calor hacia la olla.
+                </h3>
+                <div class="ejemplos">
+                    <h3><a href="../imagenes/reflexluz.png">Ver Ejemplo</a></h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="ilust" id="funcionamiento">
+            <img src="../imagenes/ilustradisp.png" alt="Ilustración de la Cocina Solar">
+            <div class="inreflex">
+                <h2>Funcionamiento del Dispositivo</h2>
+                <h3>
+                    Aprovechamos un día soleado y ubicamos la estufa mirando directo hacia el sol, asegurando todo bien para evitar cualquier movimiento que nos impida disfrutar al 100% nuestra estufa y comida. Una vez calibrado, las láminas de aluminio reflejan el calor y luz del sol directo hacia la olla, lo que genera acumulación de calor. Con buenas condiciones, podemos hervir agua.
+                </h3>
+                <div class="ejemplos">
+                    <h3><a href="../imagenes/como.png">Ver Ejemplo</a></h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="aument">
+            <img src="../imagenes/aumentcalor.png" alt="Gráfica de Aumento del Calor">
+            <div class="inreflex">
+                <h2>Aumento del Calor</h2>
+                <h3>
+                    Cuando dirigimos todo el calor hacia la olla, la temperatura empieza a aumentar. La distribución de la temperatura no es uniforme, sino que presenta un pico de calor en el costado inferior donde se encuentran los reflectores, disminuyendo hacia las zonas de la tapa.
+                </h3>
+                <div class="ejemplos">
+                    <h3><a href="../imagenes/calentura (1).png">Ver Ejemplo</a></h3>
+                </div>
+            </div>
+        </section>
+
+        <section class="about" id="temperatura">
+            <h2>La relación entre las diferentes medidas de temperaturas</h2>
+            <p>
+                Ahora vamos a analizar y mostrar las diferentes unidades de medidas y su relación entre sí las cuales son Celsius a Fahrenheit y viceversa, Celsius a Kelvin y viceversa, Fahrenheit a Kelvin y viceversa, estas medidas son muy importantes para el funcionamiento de nuestra cocina para de esta forma saber el funcionamiento adecuado en cada unidad de medida.
+            </p>
+
+            <h3 class="ns">De celsius a fahrenheit</h3>
+            <img class="ns" src="../imagenes/cf.png" alt="Conversión Celsius a Fahrenheit">
+
+            <h3 class="ns">De celsius a Kelvin</h3>
+            <img class="ns" src="../imagenes/ck.png" alt="Conversión Celsius a Kelvin">
+
+            <h3 class="ns">De fahrenheit a celsius</h3>
+            <img class="ns" src="../imagenes/fc.png" alt="Conversión Fahrenheit a Celsius">
+
+            <h3 class="ns">De fahrenheit a Kelvin</h3>
+            <img class="ns" src="../imagenes/fk.png" alt="Conversión Fahrenheit a Kelvin">
+
+            <h3 class="ns">De Kelvin a celsius</h3>
+            <img class="ns" src="../imagenes/kc.png" alt="Conversión Kelvin a Celsius">
+
+            <h3 class="ns">De Kelvin a fahrenheit</h3>
+            <img class="ns" src="../imagenes/kf.png" alt="Conversión Kelvin a Fahrenheit">
+
+            <p>
+                Estas son la relación que tienen entre sí las unidades de medidas. Estas unidades y sus fórmulas de conversión entre las escalas de temperatura (Celsius, Fahrenheit y Kelvin) son funciones lineales. Esto significa que las ecuaciones tienen la forma general:
+            </p>
+            <img class="sn" src="../imagenes/lineal.png" alt="Función Lineal">
+
+            <h2>Gráfica de las funciones lineales de cada medida de temperatura</h2>
+            <p>
+                A continuación vamos a ver las gráficas de estas funciones Fahrenheit y Kelvin, en donde se dependa de la escala en Celsius, de esta forma lograr entender mejor las funciones lineales de cada medida de temperatura y su cambio a grados celsius.
+            </p>
+
+            <nav class="navbar">
+                <ul>
+                    <li>
+                        <div class="buttonx">
+                            <a href="../imagenes/gfc.png">Ecuación de Fahrenheit en función de Celsius: y = (9/5) * x + 32</a>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="buttonxx">
+                            <a href="../imagenes/gkc.png">Ecuación de Kelvin en función de Celsius: y = x + 273.15</a>
+                        </div>
+                    </li>
+                </ul>
+            </nav>
+
+            <h2>Uso de energías renovables de nuestro prototipo con temperatura y medidas</h2>
+            <p>
+                A continuación mostraremos las energías renovables de nuestro prototipo con sus medidas y temperatura:
+            </p>
+            <p>
+                El prototipo a realizar es un dispositivo de cocina solar parabólico a base de una sombrilla, un elemento fijador, ya sea una base metálica o varias cuerdas con estacas ancladas al suelo para más versatilidad en terrenos no planos como pasto, arena o tierra, por supuesto un material reflector ya sean láminas de aluminio o papel aluminio según las preferencias y presupuesto, consta de una segunda base metálica al interior de la parábola la cual cumplirá la misión de sostener la olla, olla que debe ser de color negro para absorber el calor con mayor eficiencia.
+            </p>
+            <p>
+                Ya dicho lo anterior, existe cierta ambigüedad a la hora de establecer una temperatura máxima, debido a que depende de varias condiciones ambientales como: la temperatura ambiente, radiación solar, humedad del aire, etc. En condiciones controladas, con un día soleado y una temperatura de 35 grados Celsius el dispositivo alcanzó una temperatura que oscila entre los 85 y 150 grados Celsius en el foco de la parábola. Cabe mencionar que la temperatura no está distribuida de forma uniforme y tiene picos más altos en temperatura cerca del foco de la parábola.
+            </p>
+
+            <div class="buttonE">
+                <a href="../imagenes/calentura.png">Medidas de calor de nuestro prototipo</a>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Navegación suave para enlaces internos
+        document.querySelectorAll('.nav-item[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Funcionalidad sidebar izquierda
+        const sidebar = document.getElementById('sidebar');
+        const sidebarTrigger = document.querySelector('.sidebar-trigger');
+        
+        let hoverTimeout;
+
+        function showSidebar() {
+            clearTimeout(hoverTimeout);
+            sidebar.classList.add('active');
+        }
+
+        function hideSidebar() {
+            hoverTimeout = setTimeout(() => {
+                sidebar.classList.remove('active');
+            }, 300);
+        }
+
+        sidebarTrigger.addEventListener('mouseenter', showSidebar);
+        sidebar.addEventListener('mouseenter', showSidebar);
+        sidebar.addEventListener('mouseleave', hideSidebar);
+
+        const indicator = document.querySelector('.sidebar-indicator');
+        indicator.addEventListener('mouseenter', showSidebar);
+
+        // Funcionalidad sidebar derecha
+        const sidebarRight = document.getElementById('sidebar-right');
+        const sidebarTriggerRight = document.querySelector('.sidebar-trigger-right');
+        
+        let hoverTimeoutRight;
+
+        function showSidebarRight() {
+            clearTimeout(hoverTimeoutRight);
+            sidebarRight.classList.add('active');
+        }
+
+        function hideSidebarRight() {
+            hoverTimeoutRight = setTimeout(() => {
+                sidebarRight.classList.remove('active');
+            }, 300);
+        }
+
+        sidebarTriggerRight.addEventListener('mouseenter', showSidebarRight);
+        sidebarRight.addEventListener('mouseenter', showSidebarRight);
+        sidebarRight.addEventListener('mouseleave', hideSidebarRight);
+
+        const indicatorRight = document.querySelector('.sidebar-indicator-right');
+        indicatorRight.addEventListener('mouseenter', showSidebarRight);
+
+        // Animaciones de entrada para las secciones
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.projects, .about').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Efecto hover para filas de tabla
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            
+            row.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body>
+
+</html>

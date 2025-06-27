@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cook and Live - Documentos de Cocina Solar</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Elementos decorativos de fondo */
+    .bg-decoration {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .bg-decoration:nth-child(1) {
+      top: -100px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+
+    .bg-decoration:nth-child(2) {
+      bottom: -150px;
+      left: -150px;
+      animation-delay: 2s;
+    }
+
+    .bg-decoration:nth-child(3) {
+      top: 50%;
+      right: -200px;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(180deg); }
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .main-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    .main-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, #FFD700, #FFA500);
+      border-radius: 2px;
+    }
+
+    .subtitle {
+      font-size: 1.3rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 30px;
+      font-weight: 300;
+    }
+
+    .hero-icon {
+      font-size: 4rem;
+      margin-bottom: 30px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    /* Flecha de regreso */
+    .back-arrow {
+      position: fixed;
+      top: 30px;
+      left: 30px;
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+    }
+
+    .back-arrow:hover {
+      transform: translateX(-5px) scale(1.1);
+      background: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .back-arrow::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      border-left: 3px solid white;
+      border-bottom: 3px solid white;
+      transform: rotate(45deg);
+    }
+
+    /* Grid de documentos */
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+
+    .document-card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 1s ease-out;
+    }
+
+    .document-card:nth-child(2) { animation-delay: 0.2s; }
+    .document-card:nth-child(3) { animation-delay: 0.4s; }
+
+    .document-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      border-radius: 25px 25px 0 0;
+    }
+
+    .document-card:hover {
+      transform: translateY(-15px) scale(1.02);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+    }
+
+    .document-icon {
+      font-size: 3.5rem;
+      margin-bottom: 25px;
+      display: block;
+      text-align: center;
+    }
+
+    .document-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .document-description {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 30px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .document-features {
+      list-style: none;
+      margin-bottom: 30px;
+    }
+
+    .document-features li {
+      padding: 8px 0;
+      color: #555;
+      position: relative;
+      padding-left: 30px;
+    }
+
+    .document-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #4CAF50;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+
+    .document-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 120px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .btn-secondary:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Sección de información adicional */
+    .info-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 40px;
+      margin-top: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .info-title {
+      font-size: 2rem;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .info-content {
+      color: #666;
+      line-height: 1.8;
+      font-size: 1.1rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border-radius: 15px;
+      border: 1px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-weight: 600;
+    }
+
+    /* Animaciones */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .main-title {
+        font-size: 2.5rem;
+      }
+      
+      .documents-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .document-card {
+        padding: 30px 25px;
+      }
+      
+      .back-arrow {
+        top: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+      }
+      
+      .container {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-decoration"></div>
+  <div class="bg-decoration"></div>
+  <div class="bg-decoration"></div>
+
+  <a href="ProyCilantroSalvaje.html" class="back-arrow"></a>
+
+  <div class="container">
+    <header class="header">
+      <div class="hero-icon">🌞</div>
+      <h1 class="main-title">Cook and Live</h1>
+      <p class="subtitle">Documentación Completa de Cocina Solar Parabólica</p>
+    </header>
+
+    <div class="documents-grid">
+      <!-- Documento 1: Manual Técnico -->
+      <div class="document-card">
+        <div class="document-icon">📋</div>
+        <h2 class="document-title">Documento IEEE</h2><br><br>
+        <p class="document-description">
+          Especificaciones técnicas detalladas, dimensiones, materiales y procesos de fabricación de la cocina solar parabólica.
+        </p>
+        <ul class="document-features">
+          <li>Planos de construcción detallados</li>
+          <li>Lista completa de materiales</li>
+          <li>Especificaciones técnicas</li>
+          <li>Cálculos de eficiencia térmica</li>
+          <li>Guías de ensamblaje paso a paso</li>
+        </ul>
+        <div class="document-actions">
+          <a href="../pdf/IEEE.pdf" class="btn btn-primary">
+            📄 Ver Documento
+          </a>
+          <a href="../pdf/IEEE.pdf" class="btn btn-secondary">
+            💾 Descargar
+          </a>
+        </div>
+      </div>
+
+      <!-- Documento 2: Guía de Usuario -->
+      <div class="document-card">
+        <div class="document-icon">👤</div>
+        <h2 class="document-title">Problemas y soluciones</h2>
+        <p class="document-description">
+          Manual completo para el uso seguro y eficiente de la cocina solar, incluyendo consejos prácticos.
+        </p>
+        <ul class="document-features">
+          <li>Instrucciones de operación</li>
+          <li>Medidas de seguridad</li>
+          <li>Recetas optimizadas</li>
+          <li>Consejos de mantenimiento</li>
+          <li>Troubleshooting común</li>
+        </ul>
+        <div class="document-actions">
+          <a href="../pdf/problemas y soluciones.pdf" class="btn btn-primary">
+            📖 Ver Documento
+          </a>
+          <a href="../pdf/problemas y soluciones.pdf" class="btn btn-secondary">
+            💾 Descargar
+          </a>
+        </div>
+      </div>
+
+      <!-- Documento 3: Estudio de Impacto -->
+      <div class="document-card">
+        <div class="document-icon">🌱</div>
+        <h2 class="document-title">Modelo de Negocios</h2>
+        <p class="document-description">
+          Análisis completo del impacto ambiental, económico y social de la implementación de cocinas solares parabólicas.
+        </p>
+        <ul class="document-features">
+          <li>Impacto ambiental positivo</li>
+          <li>Análisis de costos y beneficios</li>
+          <li>Estudios de caso reales</li>
+          <li>Proyecciones de ahorro</li>
+          <li>Beneficios para la comunidad</li>
+        </ul>
+        <div class="document-actions">
+          <a href="../pdf/modelodenegocio.pdf" class="btn btn-primary">
+            📊 Ver Documento
+          </a>
+          <a href="../pdf/modelodenegocio.pdf" class="btn btn-secondary">
+            💾 Descargar
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2 class="info-title">Sobre el Proyecto Cook and Live</h2>
+      <p class="info-content">
+        Cook and Live es una iniciativa innovadora que busca democratizar el acceso a tecnologías de cocción sostenible 
+        mediante cocinas solares parabólicas de alta eficiencia. Nuestro proyecto combina diseño inteligente, 
+        materiales accesibles y documentación completa para facilitar la adopción de energías renovables en la cocina.
+      </p>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">300°C</div>
+          <div class="stat-label">Temperatura Máxima</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">85%</div>
+          <div class="stat-label">Eficiencia Térmica</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">0kg</div>
+          <div class="stat-label">Emisiones CO₂</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">$0</div>
+          <div class="stat-label">Costo Operativo</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Animación de entrada progresiva
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observar todos los elementos animables
+    document.querySelectorAll('.document-card, .info-section').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Efecto parallax suave en elementos decorativos
+    window.addEventListener('scroll', () => {
+      const scrolled = window.pageYOffset;
+      const decorations = document.querySelectorAll('.bg-decoration');
+      
+      decorations.forEach((decoration, index) => {
+        const speed = 0.1 + (index * 0.05);
+        decoration.style.transform = `translateY(${scrolled * speed}px)`;
+      });
+    });
+
+    // Agregar interactividad a las tarjetas
+    document.querySelectorAll('.document-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        card.style.zIndex = '100';
+      });
+      
+      card.addEventListener('mouseleave', () => {
+        card.style.zIndex = '1';
+      });
+    });
+
+    // Efecto de ripple en los botones
+    document.querySelectorAll('.btn').forEach(button => {
+      button.addEventListener('click', function(e) {
+        if (this.href === '#') {
+          e.preventDefault();
+          
+          // Crear efecto de ripple
+          const ripple = document.createElement('span');
+          const rect = this.getBoundingClientRect();
+          const size = Math.max(rect.width, rect.height);
+          const x = e.clientX - rect.left - size / 2;
+          const y = e.clientY - rect.top - size / 2;
+          
+          ripple.style.width = ripple.style.height = size + 'px';
+          ripple.style.left = x + 'px';
+          ripple.style.top = y + 'px';
+          ripple.style.position = 'absolute';
+          ripple.style.borderRadius = '50%';
+          ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+          ripple.style.transform = 'scale(0)';
+          ripple.style.animation = 'ripple 0.6s linear';
+          ripple.style.pointerEvents = 'none';
+          
+          this.style.position = 'relative';
+          this.style.overflow = 'hidden';
+          this.appendChild(ripple);
+          
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        }
+      });
+    });
+
+    // Agregar animación CSS para ripple
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cook and Live - Proyecto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: 
+            linear-gradient(#84ecfa, #d7d6d666), 
+            url(../imagenes/fondoolla.jpg);
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+            transition: margin-left 0.3s ease;
+            line-height: 1.6;
+        }
+
+        /* Sidebar izquierda mejorada */
+        .sidebar {
+            position: fixed;
+            left: -280px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(135, 206, 235, 0.95);
+            backdrop-filter: blur(15px);
+            border-right: 3px solid rgba(255, 215, 0, 0.6);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            box-shadow: 2px 0 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Elimina scrollbar */
+        }
+
+        .sidebar:hover,
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+        }
+
+        .sidebar-content::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Sidebar derecha nueva */
+        .sidebar-right {
+            position: fixed;
+            right: -280px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: rgba(135, 206, 235, 0.95);
+            backdrop-filter: blur(15px);
+            border-left: 3px solid rgba(255, 215, 0, 0.6);
+            transition: right 0.3s ease;
+            z-index: 1000;
+            box-shadow: -2px 0 25px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .sidebar-right:hover,
+        .sidebar-right.active {
+            right: 0;
+        }
+
+        .sidebar-right-content {
+            height: 100%;
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .sidebar-right-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sidebar-trigger {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 999;
+            background: transparent;
+        }
+
+        .sidebar-trigger-right {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 100vh;
+            z-index: 999;
+            background: transparent;
+        }
+
+        .sidebar-header {
+            padding: 2rem 1.5rem;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            text-align: center;
+        }
+
+        .sidebar-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid #FFD700;
+        }
+
+        .sidebar-title {
+            color: #333;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            color: #333;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 0 1.5rem 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.2);
+            border-left-color: #FFD700;
+            transform: translateX(5px);
+            color: #222;
+        }
+
+        .nav-item:before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #FFD700;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-item:hover:before {
+            opacity: 1;
+        }
+
+        .nav-item-text {
+            margin-left: 1.5rem;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            transition: margin-left 0.3s ease;
+            padding: 0 20px;
+        }
+
+        .main-header {
+            color: #333333;
+            padding: 40px;
+            text-align: center;
+            display: flex;
+            font-family: "Chango", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .main-header h1 {
+            margin: 0;
+            text-align: center;
+        }
+
+        .main-header img {
+            margin: 0 2rem;
+            border-radius: 100px;
+            border: 3px solid #FFD700;    
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* Títulos centrados */
+        h1, h2, h3 {
+            text-align: center;
+        }
+
+        .projects {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .projects h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        /* Textos justificados */
+        p {
+            text-align: justify;
+            margin: 1rem 0;
+            padding: 0 1rem;
+        }
+
+        .project-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .project-card {
+            background: #333333;
+            border: 1px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            margin: 10px;
+            padding: 20px;
+            width: 220px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .project-card:hover:before {
+            left: 100%;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-card h3 {
+            text-align: center;
+            color: #FFD700;
+            margin-bottom: 1rem;
+        }
+
+        .project-card p {
+            color: #fff;
+            text-align: justify;
+        }
+
+        .activity-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(45deg, #9b64f5, #e7b2fc);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .activity-button:hover {
+            background: linear-gradient(45deg, #e7b2fc, #9b64f5);
+            color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(155, 100, 245, 0.4);
+        }
+
+        .about {
+            padding: 40px 20px;
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .about h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .project-cardss {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 20px;
+        }
+
+        .project-card.animate {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px;
+            width: 200px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .project-card.animate:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-card.animate h3 {
+            color: #333;
+            text-align: center;
+        }
+
+        .project-card.animate p {
+            color: #333;
+            text-align: justify;
+        }
+
+        /* Indicadores de sidebar */
+        .sidebar-indicator {
+            position: fixed;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(to bottom, #87CEEB, #FFD700);
+            border-radius: 2px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-indicator:hover {
+            opacity: 1;
+            width: 6px;
+        }
+
+        .sidebar-indicator-right {
+            position: fixed;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(to bottom, #FFD700, #87CEEB);
+            border-radius: 2px;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            z-index: 998;
+        }
+
+        .sidebar-indicator-right:hover {
+            opacity: 1;
+            width: 6px;
+        }
+
+        /* Animaciones */
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .nav-item {
+            animation: slideInLeft 0.5s ease forwards;
+        }
+
+        .nav-item:nth-child(1) { animation-delay: 0.1s; }
+        .nav-item:nth-child(2) { animation-delay: 0.2s; }
+        .nav-item:nth-child(3) { animation-delay: 0.3s; }
+        .nav-item:nth-child(4) { animation-delay: 0.4s; }
+        .nav-item:nth-child(5) { animation-delay: 0.5s; }
+        .nav-item:nth-child(6) { animation-delay: 0.6s; }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .sidebar, .sidebar-right {
+                width: 250px;
+            }
+            
+            .sidebar {
+                left: -220px;
+            }
+            
+            .sidebar-right {
+                right: -220px;
+            }
+            
+            .main-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .main-header img {
+                margin: 0 0 1rem 0;
+            }
+
+            .project-cards, .project-cardss {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .project-card, .project-card.animate {
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            margin: 20px;
+            padding: 20px;
+        }
+
+        
+        .activity-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-button:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .activity-button:hover:before {
+            left: 100%;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chango&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    
+    <!-- Indicadores de sidebar -->
+    <div class="sidebar-indicator"></div>
+    <div class="sidebar-indicator-right"></div>
+    
+    <!-- Triggers para activar sidebars -->
+    <div class="sidebar-trigger"></div>
+    <div class="sidebar-trigger-right"></div>
+
+    <!-- Sidebar izquierda -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-header">
+                <img src="../imagenes/logo.png" alt="logo" class="sidebar-logo">
+                <h3 class="sidebar-title">COOK AND LIVE</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Navegación Principal</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-item-text">Inicio</span>
+                    </a>
+                    <a href="#nuestro-proyecto" class="nav-item">
+                        <span class="nav-item-text">Nuestro Proyecto</span>
+                    </a>
+                    <a href="#sobre-nosotros" class="nav-item">
+                        <span class="nav-item-text">Sobre Nosotros</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Materias</div>
+                    <a href="Quimica1.html" class="nav-item">
+                        <span class="nav-item-text">Química</span>
+                    </a>
+                    <a href="Fisica2.html" class="nav-item">
+                        <span class="nav-item-text">Física</span>
+                    </a>
+                    <a href="matematicas.html" class="nav-item">
+                        <span class="nav-item-text">Matemáticas</span>
+                    </a>
+                    <a href="tecnologia.html" class="nav-item">
+                        <span class="nav-item-text">Tecnología</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Desarrollo</div>
+                    <a href="fase3.html" class="nav-item">
+                        <span class="nav-item-text">Fase de Construcción</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Información</div>
+                    <a href="#contacto" class="nav-item">
+                        <span class="nav-item-text">Contacto</span>
+                    </a>
+                    <a href="#equipo" class="nav-item">
+                        <span class="nav-item-text">Nuestro Equipo</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Sidebar derecha -->
+    <div class="sidebar-right" id="sidebar-right">
+        <div class="sidebar-right-content">
+            <div class="sidebar-header">
+                <img src="../imagenes/logo.png" alt="logo" class="sidebar-logo">
+                <h3 class="sidebar-title">RECURSOS</h3>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Enlaces Útiles</div>
+                    <a href="documentos.html" class="nav-item">
+                        <span class="nav-item-text">Documentación</span>
+                    </a>
+                    <a href="videos.html" class="nav-item">
+                        <span class="nav-item-text">Videos Tutoriales</span>
+                    </a>
+                    <a href="1.html" class="nav-item">
+                        <span class="nav-item-text">Galería de Fotos</span>
+                    </a>
+                </div>
+                
+                <div class="nav-section">
+                    <div class="nav-section-title">Herramientas</div>
+                    <a href="2.html" class="nav-item">
+                        <span class="nav-item-text">Calculadora Termica</span>
+                    </a>
+                    <a href="simulador.html" class="nav-item">
+                        <span class="nav-item-text">Simulador solar</span>
+                    </a>
+                    <a href="tecnologia.html" class="nav-item">
+                        <span class="nav-item-text">Planos 3D</span>
+                    </a>
+                </div>
+                
+            </nav>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <header class="main-header">
+            <img src="../imagenes/logo.png" alt="logo" width="150" height="150">
+            <h1>
+                <div class="logo">PROYECTO COOK AND LIVE</div>
+            </h1>
+        </header>
+
+        <section class="projects" id="nuestro-proyecto">
+            <h1>NUESTRO PROYECTO</h1>
+        </section>
+
+        <div class="project-cards">
+            <div class="project-card animate">
+                <h3>Química</h3>
+                <p>En esta sección exploramos las propiedades fundamentales de los materiales utilizados en nuestro proyecto, así como el desarrollo de tecnologías de energía bio-sostenible que hacen posible el funcionamiento eficiente de nuestra cocina solar.</p>
+                <a class="activity-button" href="Quimica1.html">Ver Contenidos</a>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Física</h3>
+                <p>Aquí analizamos los cálculos de ángulos necesarios para la optimización solar, el manejo preciso de temperaturas en el proceso de cocción, y todos los aspectos técnicos involucrados en la elaboración del artefacto.</p><br><br>
+                <a class="activity-button" href="Fisica2.html">Ver Contenidos</a>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Matemáticas</h3>
+                <p>Esta sección comprende el cálculo detallado de áreas para maximizar la eficiencia de captación solar, así como el desarrollo de ecuaciones y gráficas que modelan el comportamiento térmico del sistema.</p><br><br>
+                <a class="activity-button" href="matematicas.html">Ver Contenidos</a>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Tecnología</h3>
+                <p>Presentamos la representación visual completa del prototipo mediante ilustraciones técnicas detalladas e imágenes conceptuales del producto final, mostrando tanto el diseño como la funcionalidad esperada.</p><br>
+                <a class="activity-button" href="tecnologia.html">Ver Contenidos</a>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Fase de Construcción</h3>
+                <p>Documentamos todo el proceso de construcción paso a paso, desde la planificación inicial hasta la implementación final, incluyendo pruebas, ajustes y optimizaciones realizadas durante el desarrollo.</p><br>
+                <a class="activity-button" href="fase3.html">Ver Contenidos</a>
+            </div>
+        </div>
+
+        <div class="about" id="sobre-nosotros">
+            <h1>SOBRE NOSOTROS</h1>
+        </div>
+
+        <div class="project-cardss">
+            <div class="project-card animate" id="equipo">
+                <h3>Creadores</h3>
+                <p>Somos un equipo de cuatro estudiantes comprometidos con la innovación y la sostenibilidad: Gabriel Molina, Emmanuel Hinestroza Márquez, y Valeri Ruiz Chamorro. Juntos hemos desarrollado este proyecto como parte de nuestro compromiso con las energías renovables.</p>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Institución</h3>
+                <p>Este proyecto ha sido desarrollado en el marco académico de Comfandi durante el período 2024-2025, como estudiantes de Grado Décimo del Quinto Grupo, bajo la supervisión de nuestros docentes especializados.</p>
+            </div>
+
+            <div class="project-card animate">
+                <h3>Público Objetivo</h3>
+                <p>Nuestro proyecto está especialmente dirigido a los docentes Juan Pablo Londoño Zúñiga, Aura María Mancilla, y Yefferson Garzón Escobar, así como a toda persona interesada en utilizar tecnología de cocina solar sostenible.</p>
+            </div>
+
+            <div class="project-card animate" id="contacto">
+                <h3>Más Información</h3>
+                <p>Para obtener más detalles sobre nuestro proyecto, resolver dudas técnicas, o conocer más sobre la implementación de cocinas solares, no dudes en contactarnos al número 123. Estaremos encantados de compartir nuestro conocimiento.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // Mostrar contenido principal inmediatamente
+    const mainContent = document.getElementById('mainContent');
+    if (mainContent) {
+        mainContent.classList.add('show');
+        // Animar las tarjetas del proyecto inmediatamente
+        setTimeout(() => {
+            animateProjectCards();
+        }, 100);
+    }
+    
+    // Animar tarjetas de proyecto con retraso escalonado
+    function animateProjectCards() {
+        const cards = document.querySelectorAll('.project-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+    }
+    
+    // ===== SIDEBAR FUNCTIONALITY =====
+    const sidebar = document.getElementById('sidebar');
+    const sidebarRight = document.getElementById('sidebar-right');
+    const sidebarTrigger = document.querySelector('.sidebar-trigger');
+    const sidebarTriggerRight = document.querySelector('.sidebar-trigger-right');
+    
+    // Activar sidebar izquierda
+    if (sidebarTrigger && sidebar) {
+        sidebarTrigger.addEventListener('mouseenter', () => {
+            sidebar.classList.add('active');
+        });
+        
+        sidebar.addEventListener('mouseleave', () => {
+            sidebar.classList.remove('active');
+        });
+    }
+    
+    // Activar sidebar derecha
+    if (sidebarTriggerRight && sidebarRight) {
+        sidebarTriggerRight.addEventListener('mouseenter', () => {
+            sidebarRight.classList.add('active');
+        });
+        
+        sidebarRight.addEventListener('mouseleave', () => {
+            sidebarRight.classList.remove('active');
+        });
+    }
+    
+    // ===== SMOOTH SCROLLING =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+    });
+    
+    // ===== PARALLAX EFFECT ON SCROLL =====
+    window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const parallax = document.querySelector('.main-header');
+        if (parallax) {
+            const speed = scrolled * 0.5;
+            parallax.style.transform = `translateY(${speed}px)`;
+        }
+    });
+    
+    // ===== CARDS HOVER EFFECTS =====
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // ===== RESPONSIVE BEHAVIOR =====
+    function handleResize() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarRight = document.getElementById('sidebar-right');
+        
+        if (window.innerWidth <= 768) {
+            // Ajustes para dispositivos móviles
+            if (sidebar) sidebar.style.width = '250px';
+            if (sidebarRight) sidebarRight.style.width = '250px';
+        } else {
+            // Ajustes para desktop
+            if (sidebar) sidebar.style.width = '280px';
+            if (sidebarRight) sidebarRight.style.width = '280px';
+        }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Ejecutar al cargar
+    
+    // ===== INTERSECTION OBSERVER PARA ANIMACIONES AL SCROLL =====
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observar elementos que necesitan animación al scroll
+    const elementsToAnimate = document.querySelectorAll('.project-card, .about, h1, h2, h3');
+    elementsToAnimate.forEach(el => {
+        // Solo aplicar animación si el elemento no está ya visible
+        if (!el.classList.contains('show')) {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        }
+    });
+    
+    // ===== KEYBOARD NAVIGATION =====
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarRight = document.getElementById('sidebar-right');
+            if (sidebar) sidebar.classList.remove('active');
+            if (sidebarRight) sidebarRight.classList.remove('active');
+        }
+    });
+    
+    // ===== PRELOAD CRITICAL IMAGES =====
+    const criticalImages = [
+        '/imagenes/logo.png',
+        '/imagenes/fondoolla.jpg'
+    ];
+    
+    criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
+    
+    // ===== PERFORMANCE OPTIMIZATION =====
+    // Debounce para scroll
+    let scrollTimeout;
+    const originalScrollHandler = window.onscroll;
+    
+    window.addEventListener('scroll', () => {
+        if (scrollTimeout) {
+            clearTimeout(scrollTimeout);
+        }
+        scrollTimeout = setTimeout(() => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.main-header');
+            if (parallax) {
+                const speed = scrolled * 0.5;
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        }, 16); // ~60fps
+    });
+    
+    console.log('⚡ Cook and Live - Versión optimizada cargada');
+});

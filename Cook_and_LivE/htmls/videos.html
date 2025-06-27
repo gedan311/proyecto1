@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Videos - Cilantro Salvaje</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #6c5ce7;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(45deg, #5f3dc4, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2em;
+            margin-bottom: 40px;
+        }
+
+        .upload-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .upload-section h2 {
+            color: #6c5ce7;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .file-upload {
+            border: 3px dashed #a29bfe;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            background: rgba(162, 155, 254, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload:hover {
+            border-color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.1);
+        }
+
+        .file-upload.dragover {
+            border-color: #6c5ce7;
+            background: rgba(108, 92, 231, 0.15);
+            transform: scale(1.02);
+        }
+
+        .file-upload-icon {
+            font-size: 3em;
+            color: #a29bfe;
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: #6c5ce7;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .upload-btn {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.3);
+            margin-top: 20px;
+        }
+
+        .upload-btn:hover {
+            background: linear-gradient(45deg, #5f3dc4, #6c5ce7);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.5);
+        }
+
+        .upload-btn:disabled {
+            background: #ddd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            position: relative;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .video-description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .video-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e6ed;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .status-success {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            border: 1px solid #4caf50;
+        }
+
+        .status-error {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            border: 1px solid #f44336;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #a29bfe;
+            color: #6c5ce7;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #6c5ce7;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .page-title {
+                font-size: 2em;
+            }
+
+            .upload-section {
+                padding: 25px;
+            }
+
+            .videos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🎬 Centro de Videos</div>
+            <div class="nav-buttons">
+                <a href="ProyCilantroSalvaje.html" class="nav-btn">← Volver al Inicio</a>
+                <button class="nav-btn" onclick="toggleUploadSection()">📹 Subir Video</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">Biblioteca de Videos</h1>
+        <p class="page-subtitle">Comparte y descubre contenido educativo sobre energía solar y sostenibilidad</p>
+
+        <div id="uploadSection" class="upload-section" style="display: none;">
+            <h2>📤 Publicar Nuevo Video</h2>
+            <form id="videoForm">
+                <div class="form-group">
+                    <label for="videoTitle">Título del Video</label>
+                    <input type="text" id="videoTitle" required placeholder="Ej: Construcción de Cocina Solar Parabólica">
+                </div>
+
+                <div class="form-group">
+                    <label for="videoDescription">Descripción</label>
+                    <textarea id="videoDescription" required placeholder="Describe tu video: qué enseña, materiales utilizados, tips importantes..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="videoCategory">Categoría</label>
+                    <select id="videoCategory" required>
+                        <option value="">Selecciona una categoría</option>
+                        <option value="cocinas-solares">Cocinas Solares</option>
+                        <option value="paneles-solares">Paneles Solares</option>
+                        <option value="energia-renovable">Energía Renovable</option>
+                        <option value="diy-sustentable">DIY Sustentable</option>
+                        <option value="educativo">Educativo</option>
+                        <option value="testimonios">Testimonios</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="videoTags">Etiquetas (separadas por comas)</label>
+                    <input type="text" id="videoTags" placeholder="Ej: solar, DIY, sustentable, tutorial">
+                </div>
+
+                <div class="form-group">
+                    <label>Archivo de Video</label>
+                    <div class="file-upload" id="fileUpload">
+                        <div class="file-upload-icon">🎥</div>
+                        <div class="file-upload-text">
+                            Arrastra tu video aquí o haz clic para seleccionar<br>
+                            <small>Formatos soportados: MP4, AVI, MOV (Max: 500MB)</small>
+                        </div>
+                        <input type="file" id="videoFile" accept="video/*" style="display: none;" required>
+                    </div>
+                </div>
+
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+
+                <div class="status-message" id="statusMessage"></div>
+
+                <button type="submit" class="upload-btn" id="uploadBtn">
+                    📤 Publicar Video
+                </button>
+            </form>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="cocinas-solares">Cocinas Solares</button>
+            <button class="filter-btn" data-filter="paneles-solares">Paneles Solares</button>
+            <button class="filter-btn" data-filter="energia-renovable">Energía Renovable</button>
+            <button class="filter-btn" data-filter="diy-sustentable">DIY Sustentable</button>
+            <button class="filter-btn" data-filter="educativo">Educativo</button>
+        </div>
+
+        <div class="videos-grid" id="videosGrid">
+            <!-- Videos de ejemplo -->
+            <div class="video-card" data-category="cocinas-solares">
+                <div class="video-thumbnail">▶️</div>
+                <div class="video-info">
+                    <div class="video-title">Cocina Solar Casera - Tutorial Completo</div>
+                    <div class="video-description">Aprende a construir tu propia cocina solar usando materiales reciclados. Paso a paso y con tips profesionales.</div>
+                    <div class="video-meta">
+                        <span>👁️ 1,234 vistas</span>
+                        <span>📅 Hace 2 días</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-card" data-category="paneles-solares">
+                <div class="video-thumbnail">▶️</div>
+                <div class="video-info">
+                    <div class="video-title">Instalación de Paneles Solares Residenciales</div>
+                    <div class="video-description">Guía completa para instalar paneles solares en tu hogar. Incluye cálculos de eficiencia y consejos de seguridad.</div>
+                    <div class="video-meta">
+                        <span>👁️ 2,456 vistas</span>
+                        <span>📅 Hace 1 semana</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-card" data-category="educativo">
+                <div class="video-thumbnail">▶️</div>
+                <div class="video-info">
+                    <div class="video-title">¿Cómo Funciona la Energía Solar?</div>
+                    <div class="video-description">Explicación sencilla y visual sobre el funcionamiento de la energía solar fotovoltaica y térmica.</div>
+                    <div class="video-meta">
+                        <span>👁️ 3,789 vistas</span>
+                        <span>📅 Hace 3 días</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let videos = [];
+
+        // Toggle upload section
+        function toggleUploadSection() {
+            const section = document.getElementById('uploadSection');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // File upload handling
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('videoFile');
+
+        fileUpload.addEventListener('click', () => fileInput.click());
+
+        fileUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', () => {
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileUploadText(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateFileUploadText(e.target.files[0]);
+            }
+        });
+
+        function updateFileUploadText(file) {
+            const text = fileUpload.querySelector('.file-upload-text');
+            text.innerHTML = `
+                <strong>📁 ${file.name}</strong><br>
+                <small>Tamaño: ${(file.size / (1024 * 1024)).toFixed(2)} MB</small>
+            `;
+        }
+
+        // Form submission
+        document.getElementById('videoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                title: document.getElementById('videoTitle').value,
+                description: document.getElementById('videoDescription').value,
+                category: document.getElementById('videoCategory').value,
+                tags: document.getElementById('videoTags').value,
+                file: document.getElementById('videoFile').files[0]
+            };
+
+            uploadVideo(formData);
+        });
+
+        function uploadVideo(formData) {
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            const statusMessage = document.getElementById('statusMessage');
+            const uploadBtn = document.getElementById('uploadBtn');
+
+            // Simular upload
+            progressBar.style.display = 'block';
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = '📤 Subiendo...';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 100) progress = 100;
+                
+                progressFill.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Simular éxito
+                    setTimeout(() => {
+                        statusMessage.className = 'status-message status-success';
+                        statusMessage.textContent = '✅ Video publicado exitosamente';
+                        statusMessage.style.display = 'block';
+                        
+                        // Agregar video a la grilla
+                        addVideoToGrid(formData);
+                        
+                        // Reset form
+                        document.getElementById('videoForm').reset();
+                        progressBar.style.display = 'none';
+                        uploadBtn.disabled = false;
+                        uploadBtn.textContent = '📤 Publicar Video';
+                        
+                        // Hide upload section
+                        setTimeout(() => {
+                            toggleUploadSection();
+                            statusMessage.style.display = 'none';
+                        }, 3000);
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        function addVideoToGrid(formData) {
+            const videosGrid = document.getElementById('videosGrid');
+            const videoCard = document.createElement('div');
+            videoCard.className = 'video-card';
+            videoCard.setAttribute('data-category', formData.category);
+            
+            videoCard.innerHTML = `
+                <div class="video-thumbnail">▶️</div>
+                <div class="video-info">
+                    <div class="video-title">${formData.title}</div>
+                    <div class="video-description">${formData.description}</div>
+                    <div class="video-meta">
+                        <span>👁️ 0 vistas</span>
+                        <span>📅 Ahora</span>
+                    </div>
+                </div>
+            `;
+            
+            videosGrid.insertBefore(videoCard, videosGrid.firstChild);
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.getAttribute('data-filter');
+                
+                // Update active button
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter videos
+                document.querySelectorAll('.video-card').forEach(card => {
+                    if (filter === 'all' || card.getAttribute('data-category') === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // Smooth entrance animation
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.video-card').forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

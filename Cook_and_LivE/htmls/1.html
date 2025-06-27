@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería Visual Moderna</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Flecha de navegación */
+        .back-arrow {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-arrow:hover {
+            transform: translateX(-5px) scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+        }
+
+        .back-arrow::before {
+            content: '←';
+            font-weight: bold;
+            transition: transform 0.3s ease;
+        }
+
+        .back-arrow:hover::before {
+            transform: translateX(-2px);
+        }
+
+        /* Tooltip para la flecha */
+        .back-arrow::after {
+            content: 'Volver al Proyecto';
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-arrow:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(5px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-weight: 300;
+            letter-spacing: -2px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .image-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .image-card:nth-child(1) { animation-delay: 0.1s; }
+        .image-card:nth-child(2) { animation-delay: 0.2s; }
+        .image-card:nth-child(3) { animation-delay: 0.3s; }
+        .image-card:nth-child(4) { animation-delay: 0.4s; }
+        .image-card:nth-child(5) { animation-delay: 0.5s; }
+        .image-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .image-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .thumbnail {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.4s ease;
+        }
+
+        .image-card:hover .thumbnail {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+
+        .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: white;
+            padding: 25px;
+            transform: translateY(100%);
+            transition: all 0.3s ease;
+        }
+
+        .image-card:hover .image-overlay {
+            transform: translateY(0);
+        }
+
+        .image-overlay h3 {
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .image-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        /* Efectos de partículas flotantes */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            left: 80%;
+            animation-delay: 5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            left: 50%;
+            animation-delay: 10s;
+        }
+
+        /* Modal mejorado */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            animation: modalFadeIn 0.4s ease;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 40px;
+            width: 90%;
+            max-width: 1000px;
+            top: 50%;
+            transform: translateY(-50%);
+            text-align: center;
+            animation: modalSlideIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        .modal-image:hover {
+            transform: scale(1.02);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,107,107,0.4);
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 20px rgba(255,107,107,0.6);
+        }
+
+        .modal-info {
+            margin-top: 30px;
+            color: white;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .modal-info h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .modal-info p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            line-height: 1.6;
+        }
+
+        .close-btn-bottom {
+            margin-top: 30px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-btn-bottom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        /* Animaciones */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(-50%) scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+
+            .back-arrow {
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
+            }
+
+            .back-arrow::after {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flecha de navegación -->
+    <a href="ProyCilantroSalvaje.html" class="back-arrow" title="Volver al Proyecto"></a>
+
+    <!-- Formas flotantes de fondo -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Galería de Imágenes</h1>
+            <p>Haz clic en cualquier imagen para verla en grande</p>
+        </div>
+        
+        <div class="gallery">
+            <div class="image-card" onclick="openModal('../imagenes/arbol.png', 'Árbol', 'Imagen de un árbol solitario')">
+  <img src="../imagenes/arbol.png" alt="arbol" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Árbol de...</h3>
+    <p>Problemas, causas y consecuencias </p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/aumentcalor.png', 'Aumento de Calor', 'Gráfica del aumento de temperatura')">
+  <img src="../imagenes/aumentcalor.png" alt="aumentcalor" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Aumento de Calor</h3>
+    <p>Gráfica del aumento de temperatura</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/calentura.png', 'Calentura', 'Ilustración de calentamiento')">
+  <img src="../imagenes/calentura.png" alt="calentura" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Distribucion de calor</h3>
+    <p>Ilustración de calentamiento</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/Captura de pantalla 2024-10-29 224613.png', 'Captura de Pantalla', 'Captura de gráfico o análisis')">
+  <img src="../imagenes/Captura de pantalla 2024-10-29 224613.png" alt="Captura de pantalla" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Reflexion de la luz</h3>
+    <p>gráfica y análisis</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/como.png', 'Cómo', 'Ilustración del concepto cómo')">
+  <img src="../imagenes/como.png" alt="como" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Modelo base</h3>
+    <p>Ilustración del concepto CooK and LivE</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/cronograma.png', 'Cronograma', 'Cronograma de actividades')">
+  <img src="../imagenes/cronograma.png" alt="cronograma" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Cronologia del proyecto</h3>
+    <p>Cronograma de actividades</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/estufasolar.jpg', 'Estufa Solar', 'Diseño de estufa ecológica')">
+  <img src="../imagenes/estufasolar.jpg" alt="estufasolar" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Estufa Solar</h3>
+    <p>Diseño de estufa ecológica</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/foda.png', 'Análisis FODA', 'Fortalezas, Oportunidades, Debilidades y Amenazas')">
+  <img src="../imagenes/foda.png" alt="foda" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Análisis FODA</h3>
+    <p>Fortalezas, Oportunidades, Debilidades y Amenazas</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/g.png', 'Gráfico G', 'Visualización tipo G')">
+  <img src="../imagenes/g.png" alt="g" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Diseño 3D</h3>
+    <p>Visualización posterior</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/gfc.png', 'Gráfico GFC', 'Gráfico GFC detallado')">
+  <img src="../imagenes/gfc.png" alt="gfc" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Gráfico F° y C°</h3>
+    <p>Gráfico detallado</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/gg.png', 'GG', 'Imagen GG')">
+  <img src="../imagenes/gg.png" alt="gg" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Diseño 3D</h3>
+    <p>visualizacion frontal</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/ggg.png', 'GGG', 'Visualización GGG')">
+  <img src="../imagenes/ggg.png" alt="ggg" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Diseño 3D</h3>
+    <p>Visualización lateral izq</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/gggg.png', 'GGGG', 'Visualización GGGG')">
+  <img src="../imagenes/gggg.png" alt="gggg" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Diseño 3D</h3>
+    <p>Visualización a distancia</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/gkc.png', 'GKC', 'Gráfico GKC')">
+  <img src="../imagenes/gkc.png" alt="gkc" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Grafica kelvin y C°</h3>
+    <p>Gráfico detallado</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/graficaexponencial.png', 'Gráfica Exponencial', 'Crecimiento exponencial representado')">
+  <img src="../imagenes/graficaexponencial.png" alt="graficaexponencial" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Relacion Temperatura y tiempo</h3>
+    <p>Crecimiento exponencial representado</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/ilustradisp.png', 'Ilustración Dispositivos', 'Uso de diferentes dispositivos')">
+  <img src="../imagenes/ilustradisp.png" alt="ilustradisp" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Ilustración Dispositivo</h3>
+    <p>dispositivo</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/ishikawa.png', 'Diagrama de Ishikawa', 'Causas y efectos visualizados')">
+  <img src="../imagenes/ishikawa.png" alt="ishikawa" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Diagrama de Ishikawa</h3>
+    <p>Causas y efectos visualizados</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/ley 1665 del 2013.png', 'Ley 1665 de 2013', 'Resumen gráfico de la Ley 1665')">
+  <img src="../imagenes/ley 1665 del 2013.png" alt="ley 1665 del 2013" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Ley 1665 de 2013</h3>
+    <p>Resumen gráfico de la Ley 1665</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/logo.png', 'Logo', 'Logo representativo del proyecto')">
+  <img src="../imagenes/logo.png" alt="logo" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Logo</h3>
+    <p>Logo representativo del proyecto</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/paintprog.png', 'Paint Prog', 'Diseño en paint sobre el programa')">
+  <img src="../imagenes/paintprog.png" alt="paintprog" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Graficas Generales</h3>
+    <p>graficas sobre el funcionamiento</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/proto.jpg', 'Prototipo', 'Imagen del prototipo desarrollado')">
+  <img src="../imagenes/proto.jpg" alt="proto" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Prototipo</h3>
+    <p>Imagen del prototipo desarrollado</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/reflexcalor1.png', 'Reflexión Calor', 'Reflexión sobre la energía térmica')">
+  <img src="../imagenes/reflexcalor1.png" alt="reflexcalor1" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Reflexión Calor</h3>
+    <p>Reflexión sobre la energía térmica</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/reflexluz.png', 'Reflexión Luz', 'Reflexión sobre la energía luminosa')">
+  <img src="../imagenes/reflexluz.png" alt="reflexluz" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Reflexión Luz</h3>
+    <p>Reflexión sobre la energía luminosa</p>
+  </div>
+</div>
+
+<div class="image-card" onclick="openModal('../imagenes/sancoco.png', 'SanCoCo', 'Imagen del proyecto SanCoCo')">
+  <img src="../imagenes/sancoco.png" alt="sancoco" class="thumbnail">
+  <div class="image-overlay">
+    <h3>Sancocho</h3>
+    <p>Ilustracion 3D</p>
+  </div>
+</div>
+
+        </div>
+    </div>
+
+    <!-- Modal mejorado -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">&times;</button>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <div class="modal-info">
+                <h2 id="modalTitle"></h2>
+                <p id="modalDescription"></p>
+            </div>
+            <button class="close-btn-bottom" onclick="closeModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageSrc, title, description) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            
+            
+            modalImage.src = imageSrc;
+           
+            
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera de la imagen
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Cerrar modal con la tecla Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Efecto de paralaje sutil al hacer scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const shapes = document.querySelectorAll('.shape');
+            shapes.forEach((shape, index) => {
+                const speed = 0.5 + (index * 0.1);
+                shape.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
